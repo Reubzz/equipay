@@ -1,11 +1,12 @@
-import React from 'react';
+import { SplitProvider } from "../context/SplitContext";
+import SplitForm from "../components/SplitForm/SplitForm";
 
 const SplitPage = () => {
-    return (
-        <>
-            <h1>Split Page</h1>
-        </>
-    );
-}
+  return (
+    <SplitProvider>
+      <SplitForm />
+    </SplitProvider>
+  );
+};
 
 export default SplitPage;
