@@ -1,53 +1,53 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { useSplit } from "../../context/SplitContext";
+import styles from "../../scss/components/Steps.module.scss";
 
 const Step1SplitInfo = ({ nextStep }) => {
   const { formData, updateForm } = useSplit();
-  const [localData, setLocalData] = useState({
-    title: formData.title,
-    date: formData.date,
-    time: formData.time,
-  });
 
-  const handleChange = (e) => {
-    setLocalData({ ...localData, [e.target.name]: e.target.value });
-  };
-
-  const handleNext = () => {
-    updateForm(localData);
-    nextStep();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.title && formData.date && formData.time) {
+      nextStep();
+    }
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-xl shadow-lg text-white w-96">
-      <h2 className="text-xl mb-4 font-semibold">Split Information</h2>
-      <input
-        name="title"
-        placeholder="Enter title"
-        value={localData.title}
-        onChange={handleChange}
-        className="w-full mb-2 p-2 rounded bg-gray-700"
-      />
-      <input
-        type="date"
-        name="date"
-        value={localData.date}
-        onChange={handleChange}
-        className="w-full mb-2 p-2 rounded bg-gray-700"
-      />
-      <input
-        type="time"
-        name="time"
-        value={localData.time}
-        onChange={handleChange}
-        className="w-full mb-4 p-2 rounded bg-gray-700"
-      />
-      <button
-        onClick={handleNext}
-        className="bg-green-500 w-full py-2 rounded hover:bg-green-600"
-      >
-        Next
-      </button>
+    <div className={styles.card}>
+      <h2 className={styles.title}>Split Information</h2>
+      <form onSubmit={handleSubmit}>
+        <label className={styles.label}>Title</label>
+        <input
+          type="text"
+          className={styles.input}
+          placeholder="Jackson's Restaurant Split"
+          value={formData.title}
+          onChange={(e) => updateForm({ title: e.target.value })}
+          required
+        />
+
+        <label className={styles.label}>Date & Time</label>
+        <div className={styles.dateTimeRow}>
+          <input
+            type="date"
+            className={styles.input}
+            value={formData.date}
+            onChange={(e) => updateForm({ date: e.target.value })}
+            required
+          />
+          <input
+            type="time"
+            className={styles.input}
+            value={formData.time}
+            onChange={(e) => updateForm({ time: e.target.value })}
+            required
+          />
+        </div>
+
+        <button type="submit" className={styles.btnPrimary}>
+          Next
+        </button>
+      </form>
     </div>
   );
 };
