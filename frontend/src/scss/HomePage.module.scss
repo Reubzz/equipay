@@ -1,0 +1,377 @@
+.main {
+  flex-grow: 1;
+}
+
+// ==================== HERO SECTION ====================
+.hero {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+
+  @media (min-width: 768px) {
+    padding: 8rem 0;
+  }
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to top,
+      rgba(37, 37, 37, 1) 0%,
+      rgba(37, 37, 37, 0.7) 40%,
+      rgba(37, 37, 37, 0.7) 100%
+    ),
+    url("https://lh3.googleusercontent.com/aida-public/AB6AXuDq2Buh9TxuGm6ycSaJrQJdGdddp0MA46s5NKf2Gm9_zdM1CFpRyR3vbrwVYGmzwYrq04ddXVT9rv2cadHQbzxbK9gz25bSVHiktf5SKBzQZJ00L7yUZvkrdFWaDoXETKYWLHa0sYpa04RrMUwqAKQB_OOgF5GlM12Y_9oEKIoZTgMn2SripGAC0A0wTCVdSD7J27kmohpJuqp25y6lfbrw3FpMlruSMeADYxfwUqXf6YQ3B9eGEuzIttjIeuyxqpJa1qTK3OLvmoWZ");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.heroGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    #252525,
+    transparent,
+    transparent
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+  display: flex;
+  max-width: 56rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+  color: white;
+  margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 3.75rem;
+  }
+}
+
+.heroSubtitle {
+  max-width: 42rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(224, 224, 224, 0.8);
+  margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: 1.125rem;
+  }
+}
+
+.heroBtn {
+  display: flex;
+  min-width: 84px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  height: 3rem;
+  padding: 0 2rem;
+  background: #00ff88;
+  color: #252525;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
+  transition: all 0.3s;
+  
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.6), 0 0 40px rgba(0, 255, 136, 0.3);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .heroLink {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #414141;
+  }
+}
+
+// ==================== FEATURES SECTION ====================
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 4rem 1rem;
+
+  @media (min-width: 640px) {
+    padding: 6rem 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 6rem 2.5rem;
+  }
+}
+
+.featuresContainer {
+  margin: 0 auto;
+  max-width: 1152px;
+  width: 100%;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: white;
+  margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: 2.25rem;
+  }
+}
+
+.sectionSubtitle {
+  max-width: 48rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(224, 224, 224, 0.8);
+  margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: 1.125rem;
+  }
+}
+
+.featuresGrid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.featureCard {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: rgba(0, 255, 136, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+
+    .featureGlow {
+      opacity: 1;
+    }
+  }
+}
+
+.featureGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 0 20px 5px rgba(0, 255, 136, 0.15);
+  pointer-events: none;
+}
+
+.featureIcon {
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+  flex-shrink: 0;
+
+  span {
+    font-size: 24px;
+  }
+}
+
+.featureContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: rgba(224, 224, 224, 0.7);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ==================== HOW IT WORKS SECTION ====================
+.howItWorks {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 4rem 1rem;
+
+  @media (min-width: 640px) {
+    padding: 6rem 1rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 6rem 2.5rem;
+  }
+}
+
+.howItWorksContainer {
+  margin: 0 auto;
+  max-width: 1152px;
+  width: 100%;
+}
+
+.stepsGrid {
+  margin-top: 5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 5rem 0;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 3rem;
+  }
+}
+
+.stepCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stepIconWrapper {
+  position: relative;
+  display: flex;
+  height: 5rem;
+  width: 5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2), 0 0 30px 10px rgba(0, 255, 136, 0.1);
+
+  span {
+    color: #00ff88;
+    font-size: 36px;
+  }
+}
+
+.stepNumber {
+  position: absolute;
+  top: -0.75rem;
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.5);
+  background: #252525;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.stepTitle {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.stepDescription {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(224, 224, 224, 0.7);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.stepArrow {
+  position: absolute;
+  top: 50%;
+  right: -1.5rem;
+  transform: translateY(-50%);
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+
+  svg {
+    height: 3rem;
+    width: 3rem;
+    color: #00ff88;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+  }
+}
+
+.stepCard:last-child .stepArrow {
+  display: none;
+}
