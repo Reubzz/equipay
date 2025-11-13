@@ -2,6 +2,7 @@
   font-family: "Roboto", sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  min-height: 100vh;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -12,15 +13,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-body {
+* {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  min-height: 100vh;
   box-sizing: border-box;
 }
-
+html, body {
+  max-width: 100%;
+}
 
 @media (prefers-color-scheme: light) {
   :root {

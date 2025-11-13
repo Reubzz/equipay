@@ -1,5 +1,8 @@
 .footer {
-    background: #373737;
+    background: #303030cc;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 2px solid #ffffff1a;
     flex-direction: column;
     justify-content: center;
     align-items: center;
