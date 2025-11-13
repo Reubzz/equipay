@@ -4,12 +4,14 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 // import ProgressBar from "../Shared/ProgressBar";
 import Step1 from "./1SplitInfo";
-// import Step2 from "./2AddPeople";
-// import Step3 from "./3BillDetails";
+import Step2 from "./2AddPeople";
+import Step3 from "./3BillDetails";
 // import Step4 from "./4ItemSplit";
 // import Step5 from "./5TaxTipSplit";
 // import Step6 from "./6Review";
-// import Step7 from "./7Complete";
+import Step7 from "./7Complete";
+
+import styles from "../../scss/components/SplitForm.module.scss";
 
 const SplitForm = () => {
   const [step, setStep] = useState(1);
@@ -20,16 +22,16 @@ const SplitForm = () => {
 
   const steps = {
     1: <Step1 nextStep={nextStep} />,
-    // 2: <Step2 nextStep={nextStep} prevStep={prevStep} />,
-    // 3: <Step3 nextStep={nextStep} prevStep={prevStep} />,
+    2: <Step2 nextStep={nextStep} prevStep={prevStep} />,
+    3: <Step3 nextStep={nextStep} prevStep={prevStep} />,
     // 4: <Step4 nextStep={nextStep} prevStep={prevStep} />,
     // 5: <Step5 nextStep={nextStep} prevStep={prevStep} />,
     // 6: <Step6 nextStep={nextStep} prevStep={prevStep} />,
-    // 7: <Step7 />,
+    7: <Step7 />,
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <section className={styles.stepContent} >
       {/* <ProgressBar currentStep={step} totalSteps={totalSteps} /> */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -43,7 +45,7 @@ const SplitForm = () => {
           {steps[step]}
         </motion.div>
       </AnimatePresence>
-    </div>
+    </section>
   );
 };
 
