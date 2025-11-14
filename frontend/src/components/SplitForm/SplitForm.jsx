@@ -6,9 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import Step1 from "./1SplitInfo";
 import Step2 from "./2AddPeople";
 import Step3 from "./3BillDetails";
-// import Step4 from "./4ItemSplit";
-// import Step5 from "./5TaxTipSplit";
-// import Step6 from "./6Review";
+import Step4 from "./4ItemSplit";
+import Step5 from "./5TaxTipSplit";
+import Step6 from "./6Review";
 import Step7 from "./7Complete";
 
 import styles from "../../scss/components/SplitForm.module.scss";
@@ -24,9 +24,9 @@ const SplitForm = () => {
     1: <Step1 nextStep={nextStep} />,
     2: <Step2 nextStep={nextStep} prevStep={prevStep} />,
     3: <Step3 nextStep={nextStep} prevStep={prevStep} />,
-    // 4: <Step4 nextStep={nextStep} prevStep={prevStep} />,
-    // 5: <Step5 nextStep={nextStep} prevStep={prevStep} />,
-    // 6: <Step6 nextStep={nextStep} prevStep={prevStep} />,
+    4: <Step4 nextStep={nextStep} prevStep={prevStep} />,
+    5: <Step5 nextStep={nextStep} prevStep={prevStep} />,
+    6: <Step6 nextStep={nextStep} prevStep={prevStep} />,
     7: <Step7 />,
   };
 
