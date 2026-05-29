@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useSplit } from "../../context/SplitContext";
+import { useEnterToAdvance } from "../../hooks/useEnterToAdvance";
 import styles from "../../scss/components/Steps.module.scss";
 
 const Step2 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
     const [newPerson, setNewPerson] = useState({ name: "", email: "" });
+    const handleEnterAdvance = useEnterToAdvance();
 
     const addPerson = () => {
         if (newPerson.name) {
@@ -22,7 +24,7 @@ const Step2 = ({ nextStep, prevStep }) => {
     };
 
     return (
-        <div className={styles.card}>
+        <div className={styles.card} data-enter-scope="true">
             <h2 className={styles.title}>Add People</h2>
 
             <div className={styles.section}>
@@ -67,6 +69,7 @@ const Step2 = ({ nextStep, prevStep }) => {
                     className={styles.input}
                     value={newPerson.name}
                     onChange={(e) => setNewPerson({ ...newPerson, name: e.target.value })}
+                    onKeyDown={handleEnterAdvance}
                 />
                 <input
                     type="email"
@@ -76,6 +79,7 @@ const Step2 = ({ nextStep, prevStep }) => {
                     onChange={(e) =>
                         setNewPerson({ ...newPerson, email: e.target.value })
                     }
+                    onKeyDown={handleEnterAdvance}
                 />
                 <button type="button" onClick={addPerson} className={styles.btnAdd}>
                     Add

@@ -8,7 +8,7 @@ const Footer = () => {
         <div className={styles.topSpacer}>
             <div className={styles.logoContainer}>
                 <img src={logo} alt="EquiPay Logo" className={styles.logoImage} />
-                <p className={styles.logoDescription}>A simple React Js project - helps groups split expenses, track balances, and stay financially fair.</p>
+                <p className={styles.logoDescription}>A fast, fair bill-splitting tool for groups to track who owes what and settle up with confidence.</p>
             </div>
             <div className={styles.footerLinks}>
                 <div className={styles.footerLinksTitle}>
