@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSplit } from "../../context/SplitContext";
 import styles from "../../scss/components/Steps.module.scss";
 
 const Step4 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
     const [selectedItem, setSelectedItem] = useState(null);
+    const selectorRef = useRef(null);
+    const lastActiveElement = useRef(null);
 
     const togglePersonForItem = (itemId, personId) => {
         const updatedItems = formData.items.map((item) => {
@@ -27,6 +29,56 @@ const Step4 = ({ nextStep, prevStep }) => {
         { id: "payer", name: "You", email: formData.payer.email },
         ...formData.people,
     ];
+    const selected = formData.items.find((item) => item.id === selectedItem);
+
+    useEffect(() => {
+        if (!selectedItem) return undefined;
+        const selector = selectorRef.current;
+        if (!selector) return undefined;
+
+        lastActiveElement.current = document.activeElement;
+
+        const getFocusable = () =>
+            Array.from(
+                selector.querySelectorAll(
+                    "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+                )
+            ).filter((el) => !el.disabled);
+
+        const focusable = getFocusable();
+        if (focusable.length > 0) {
+            focusable[0].focus();
+        }
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                setSelectedItem(null);
+                return;
+            }
+            if (event.key !== "Tab") return;
+            const items = getFocusable();
+            if (items.length === 0) return;
+            const first = items[0];
+            const last = items[items.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            if (lastActiveElement.current instanceof HTMLElement) {
+                lastActiveElement.current.focus();
+            }
+        };
+    }, [selectedItem]);
 
     return (
         <div className={styles.card}>
@@ -54,33 +106,44 @@ const Step4 = ({ nextStep, prevStep }) => {
                 </div>
 
                 {selectedItem && (
-                    <div className={styles.peopleSelector}>
-                        <h3 className={styles.selectorTitle}>
-                            Choose for{" "}
-                            {formData.items.find((i) => i.id === selectedItem)?.name}
-                        </h3>
-                        {allPeople.map((person) => {
-                            const item = formData.items.find((i) => i.id === selectedItem);
-                            const isSelected = item?.assignedTo?.includes(person.id);
-                            return (
-                                <button
-                                    key={person.id}
-                                    type="button"
-                                    onClick={() => togglePersonForItem(selectedItem, person.id)}
-                                    className={`${styles.personSelectBtn} ${isSelected ? styles.personSelectBtnActive : ""
-                                        }`}
-                                >
-                                    {person.name}
-                                </button>
-                            );
-                        })}
-                        <button
-                            type="button"
-                            onClick={() => setSelectedItem(null)}
-                            className={styles.btnConfirm}
+                    <div
+                        className={styles.peopleSelectorOverlay}
+                        onClick={() => setSelectedItem(null)}
+                    >
+                        <div
+                            className={styles.peopleSelector}
+                            onClick={(event) => event.stopPropagation()}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="item-split-title"
+                            ref={selectorRef}
                         >
-                            Confirm
-                        </button>
+                            <h3 className={styles.selectorTitle} id="item-split-title">
+                                Choose for{" "}
+                                {selected?.name}
+                            </h3>
+                            {allPeople.map((person) => {
+                                const isSelected = selected?.assignedTo?.includes(person.id);
+                                return (
+                                    <button
+                                        key={person.id}
+                                        type="button"
+                                        onClick={() => togglePersonForItem(selectedItem, person.id)}
+                                        className={`${styles.personSelectBtn} ${isSelected ? styles.personSelectBtnActive : ""
+                                            }`}
+                                    >
+                                        {person.name}
+                                    </button>
+                                );
+                            })}
+                            <button
+                                type="button"
+                                onClick={() => setSelectedItem(null)}
+                                className={styles.btnConfirm}
+                            >
+                                Confirm
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

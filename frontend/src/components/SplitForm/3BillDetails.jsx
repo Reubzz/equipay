@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSplit } from "../../context/SplitContext";
+import { useEnterToAdvance } from "../../hooks/useEnterToAdvance";
 import styles from "../../scss/components/Steps.module.scss";
 
 const Step3 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
     const [newItem, setNewItem] = useState({ name: "", amount: "" });
+    const handleEnterAdvance = useEnterToAdvance();
 
     const addItem = () => {
         if (newItem.name && newItem.amount) {
@@ -15,19 +17,22 @@ const Step3 = ({ nextStep, prevStep }) => {
         }
     };
 
-    const subtotal = formData.items.reduce(
-        (sum, item) => sum + parseFloat(item.amount || 0),
-        0
+    const subtotal = useMemo(
+        () =>
+            formData.items.reduce(
+                (sum, item) => sum + parseFloat(item.amount || 0),
+                0
+            ),
+        [formData.items]
     );
-    const total = subtotal + parseFloat(formData.tax || 0) + parseFloat(formData.tip || 0);
+    const total = useMemo(
+        () => subtotal + parseFloat(formData.tax || 0) + parseFloat(formData.tip || 0),
+        [subtotal, formData.tax, formData.tip]
+    );
     
     useEffect(() => {
-        const subtotal = formData.items.reduce(
-            (sum, item) => sum + parseFloat(item.amount || 0),
-            0
-        );
         updateForm({ subtotal });
-    }, [formData.items]);
+    }, [subtotal, updateForm]);
     
     const handleNext = () => {
         updateForm({ 
@@ -37,7 +42,7 @@ const Step3 = ({ nextStep, prevStep }) => {
         nextStep();
     };
     return (
-        <div className={styles.card}>
+        <div className={styles.card} data-enter-scope="true">
             <h2 className={styles.title}>Add Bill Details</h2>
 
             <label className={styles.label}>Upload Bill</label>
@@ -63,6 +68,7 @@ const Step3 = ({ nextStep, prevStep }) => {
                     className={styles.input}
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                    onKeyDown={handleEnterAdvance}
                 />
                 <input
                     type="number"
@@ -70,6 +76,7 @@ const Step3 = ({ nextStep, prevStep }) => {
                     className={styles.input}
                     value={newItem.amount}
                     onChange={(e) => setNewItem({ ...newItem, amount: e.target.value })}
+                    onKeyDown={handleEnterAdvance}
                 />
                 <button type="button" onClick={addItem} className={styles.btnAdd}>
                     Add
@@ -91,6 +98,7 @@ const Step3 = ({ nextStep, prevStep }) => {
                             className={styles.input}
                             value={formData.tax}
                             onChange={(e) => updateForm({ tax: e.target.value })}
+                            onKeyDown={handleEnterAdvance}
                             />
                         {/* <button type="button" className={styles.btnSmall}>
                                 Add
@@ -104,6 +112,7 @@ const Step3 = ({ nextStep, prevStep }) => {
                             className={styles.input}
                             value={formData.tip}
                             onChange={(e) => updateForm({ tip: e.target.value })}
+                            onKeyDown={handleEnterAdvance}
                         />
                         {/* <button type="button" className={styles.btnSmall}>
                                 Add
