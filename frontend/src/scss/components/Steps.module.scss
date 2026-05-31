@@ -73,8 +73,8 @@
   display: block;
   appearance: auto;
   -webkit-appearance: auto;
-  color-scheme: dark;
-  -webkit-text-fill-color: #f3f4f6;
+  color-scheme: light dark;
+  -webkit-text-fill-color: currentColor;
   padding-left: 0.95rem;
   padding-right: 2.75rem;
   box-sizing: border-box;
