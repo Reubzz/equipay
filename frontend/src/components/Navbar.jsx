@@ -105,10 +105,11 @@ const Navbar = () => {
                         id={menuId}
                         role="dialog"
                         aria-modal="true"
+                        aria-labelledby="mobile-menu-title"
                         ref={panelRef}
                     >
                         <div className={styles.menuHeader}>
-                            <span className={styles.menuTitle}>Menu</span>
+                            <span className={styles.menuTitle} id="mobile-menu-title">Menu</span>
                             <button type="button" className={styles.menuClose} onClick={closeMenu}>
                                 Close
                             </button>
