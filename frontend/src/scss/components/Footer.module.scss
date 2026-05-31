@@ -96,22 +96,22 @@
     .footer {
         padding: 2rem 1rem 2.5rem;
     }
-    .topSpacer {
+    .footer .topSpacer {
         flex-direction: column;
         align-items: center;
         text-align: center;
         padding: 1.25rem;
     }
-    .logoContainer {
+    .footer .logoContainer {
         align-items: center;
     }
-    .linksTitle {
+    .footer .linksTitle {
         font-size: 1.35rem;
     }
-    .logoImage {
+    .footer .logoImage {
         width: 140px;
     }
-    .logoDescription {
+    .footer .logoDescription {
         font-size: 0.9rem;
     }
 }
