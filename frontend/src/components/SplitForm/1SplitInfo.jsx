@@ -14,7 +14,7 @@ const Step1SplitInfo = ({ nextStep }) => {
     }
 
     if (!formData.title || !formData.title.trim()) {
-      updateForm({ title: "quick split" });
+      updateForm({ title: "Quick Split" });
     }
 
     nextStep();
