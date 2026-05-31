@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 const SplitContext = createContext();
 
@@ -15,64 +15,73 @@ export const SplitProvider = ({ children }) => {
     return { date, time };
   };
 
-  const { date: defaultDate, time: defaultTime } = getDefaultDateTime();
-  const [formData, setFormData] = useState({
-    title: "",
-    date: defaultDate,
-    time: defaultTime,
-    payer: { name: "You", email: "test@reubz.io" },
-    people: [],
-    items: [],
-    tax: 0,
-    tip: 0,
-    taxSplit: "proportional",
-    tipSplit: "equal",
-    totalAmount: 0,
-    subtotal: 0,
+  const [formData, setFormData] = useState(() => {
+    const { date: defaultDate, time: defaultTime } = getDefaultDateTime();
+    return {
+      title: "",
+      date: defaultDate,
+      time: defaultTime,
+      payer: { name: "You", email: "" },
+      people: [],
+      items: [],
+      tax: 0,
+      tip: 0,
+      taxSplit: "proportional",
+      tipSplit: "equal",
+      totalAmount: 0,
+      subtotal: 0,
+    };
   });
 
-  const updateForm = (newData) => {
+  const updateForm = useCallback((newData) => {
     setFormData((prev) => ({ ...prev, ...newData }));
-  };
+  }, []);
 
-  const calculatePersonAmount = (personId) => {
-    const itemsTotal = formData.items
-      .filter((item) => item.assignedTo?.includes(personId))
-      .reduce((sum, item) => {
-        const splitCount = item.assignedTo.length || 1;
-        return sum + parseFloat(item.amount || 0) / splitCount;
-      }, 0);
+  const calculatePersonAmount = useCallback((personId) => {
+    const itemsTotal = formData.items.reduce((sum, item) => {
+      const assignedTo = Array.isArray(item.assignedTo) ? item.assignedTo : [];
+      if (!assignedTo.includes(personId)) {
+        return sum;
+      }
+
+      const splitCount = assignedTo.length || 1;
+      return sum + parseFloat(item.amount || 0) / splitCount;
+    }, 0);
 
     const subtotal = parseFloat(formData.subtotal) || 0;
     const tax = parseFloat(formData.tax) || 0;
     const tip = parseFloat(formData.tip) || 0;
     const peopleCount = formData.people.length + 1; 
 
-    let taxPerPerson = 0;
-    if (formData.taxSplit === "equal") {
-      taxPerPerson = tax / peopleCount;
-    } else {
-      if (subtotal > 0) {
-        taxPerPerson = (itemsTotal / subtotal) * tax;
+    const splitExtra = (amount, splitMode) => {
+      if (amount === 0) {
+        return 0;
       }
-    }
 
-    let tipPerPerson = 0;
-    if (formData.tipSplit === "equal") {
-      tipPerPerson = tip / peopleCount;
-    } else {
-      if (subtotal > 0) {
-        tipPerPerson = (itemsTotal / subtotal) * tip;
+      if (splitMode === "equal") {
+        return amount / peopleCount;
       }
-    }
+
+      if (subtotal > 0) {
+        return (itemsTotal / subtotal) * amount;
+      }
+
+      return 0;
+    };
+
+    const taxPerPerson = splitExtra(tax, formData.taxSplit);
+    const tipPerPerson = splitExtra(tip, formData.tipSplit);
 
     return itemsTotal + taxPerPerson + tipPerPerson;
-  };
+  }, [formData]);
+
+  const contextValue = useMemo(
+    () => ({ formData, updateForm, calculatePersonAmount }),
+    [formData, updateForm, calculatePersonAmount]
+  );
 
   return (
-    <SplitContext.Provider
-      value={{ formData, updateForm, calculatePersonAmount }}
-    >
+    <SplitContext.Provider value={contextValue}>
       {children}
     </SplitContext.Provider>
   );
