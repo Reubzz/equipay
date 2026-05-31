@@ -9,9 +9,15 @@ const Step1SplitInfo = ({ nextStep }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.title && formData.date && formData.time) {
-      nextStep();
+    if (!formData.date || !formData.time) {
+      return;
     }
+
+    if (!formData.title || !formData.title.trim()) {
+      updateForm({ title: "quick split" });
+    }
+
+    nextStep();
   };
 
   return (
@@ -26,7 +32,6 @@ const Step1SplitInfo = ({ nextStep }) => {
           value={formData.title}
           onChange={(e) => updateForm({ title: e.target.value })}
           onKeyDown={handleEnterAdvance}
-          required
         />
 
         <label className={styles.label}>Date & Time</label>
