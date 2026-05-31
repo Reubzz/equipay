@@ -69,7 +69,7 @@ const Navbar = () => {
             <nav className={styles.navbar}>
                 <div className={styles.navbarStart}>
                     <img src={logo} alt="Logo" className={styles.logo} />
-                    <h1 className={styles.title}>EquiPay</h1>
+                    <h1>EquiPay</h1>
                 </div>
                 <div className={styles.navbarCenter}>
                     <Link to="/" className={styles.navLink}>Home</Link>
