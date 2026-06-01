@@ -498,22 +498,27 @@
   animation: selectorSlideUp 0.25s ease;
   display: flex;
   flex-direction: column;
-  max-height: calc(100svh - 2.5rem);
-  max-height: calc(100vh - 2.5rem);
+  /* ensure it fits between navbar and footer with safe fallbacks */
+  max-height: calc(100svh - var(--app-navbar-height, 64px) - var(--app-footer-height, 64px) - 2rem);
+  max-height: calc(100vh - 64px - 64px - 2rem);
   overflow: hidden;
 }
 
 .peopleSelectorOverlay {
   position: fixed;
-  inset: 0;
+  /* position below the navbar using CSS var --app-navbar-height */
+  top: var(--app-navbar-height, 64px);
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(8, 10, 16, 0.55);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 1.25rem;
   padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
-  z-index: 80;
-  overflow: hidden;
+  z-index: calc(var(--app-navbar-z, 100) - 1);
+  overflow: auto;
 }
 
 @media (max-width: 700px) {
@@ -528,8 +533,9 @@
     border-bottom-right-radius: 20px;
     border-top-left-radius: 22px;
     border-top-right-radius: 22px;
-    max-height: calc(100svh - 1.5rem);
-    max-height: calc(100vh - 1.5rem);
+    /* allow a slightly larger sheet on small screens but still respect navbar/footer vars */
+    max-height: calc(100svh - var(--app-navbar-height, 64px) - var(--app-footer-height, 64px) - 1.5rem);
+    max-height: calc(100vh - 64px - 64px - 1.5rem);
   }
 }
 
@@ -558,6 +564,32 @@
   flex: 1;
   min-height: 0;
   overscroll-behavior: contain;
+}
+
+/* Thin themed scrollbar with glassy thumb for modal content */
+.peopleSelectorBody::-webkit-scrollbar {
+  width: 8px;
+}
+.peopleSelectorBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.peopleSelectorBody::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.peopleSelectorOverlay::-webkit-scrollbar {
+  width: 8px;
+}
+.peopleSelectorOverlay::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+}
+
+/* Firefox scrollbar styling */
+.peopleSelectorBody {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
 }
 
 .peopleSelectorFooter {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useSplit } from "../../context/SplitContext";
 import styles from "../../scss/components/Steps.module.scss";
 
@@ -226,6 +227,16 @@ const Step4 = ({ nextStep, prevStep }) => {
         };
     }, [selectedItem]);
 
+    // Lock body scroll while modal is open to prevent viewport shifting
+    useEffect(() => {
+        if (!selectedItem) return undefined;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = previousOverflow || "";
+        };
+    }, [selectedItem]);
+
     return (
         <div className={styles.card}>
             <h2 className={styles.title}>Item Split</h2>
@@ -265,7 +276,7 @@ const Step4 = ({ nextStep, prevStep }) => {
                     ))}
                 </div>
 
-                {selectedItem && selected && (
+                {selectedItem && selected && createPortal(
                     <div
                         className={styles.peopleSelectorOverlay}
                         onClick={() => setSelectedItem(null)}
@@ -289,8 +300,8 @@ const Step4 = ({ nextStep, prevStep }) => {
                                     <div className={styles.toggleBtnGroup}>
                                         <button
                                             type="button"
-                                            className={`${styles.toggleBtn} ${selectedSplitMode === "counts" ? styles.toggleBtnActive : ""
-                                                }`}
+                                            className={`${styles.toggleBtn} ${selectedSplitMode === "counts" ? styles.toggleBtnActive : ""}
+                                            `}
                                             aria-pressed={selectedSplitMode === "counts"}
                                             onClick={() => updateSplitMode(selectedItem, "counts")}
                                         >
@@ -298,8 +309,8 @@ const Step4 = ({ nextStep, prevStep }) => {
                                         </button>
                                         <button
                                             type="button"
-                                            className={`${styles.toggleBtn} ${selectedSplitMode === "units" ? styles.toggleBtnActive : ""
-                                                }`}
+                                            className={`${styles.toggleBtn} ${selectedSplitMode === "units" ? styles.toggleBtnActive : ""}
+                                            `}
                                             aria-pressed={selectedSplitMode === "units"}
                                             onClick={() => updateSplitMode(selectedItem, "units")}
                                         >
@@ -312,9 +323,7 @@ const Step4 = ({ nextStep, prevStep }) => {
                                     <button
                                         type="button"
                                         className={styles.splitQuickBtn}
-                                        onClick={() =>
-                                            setAllUnitsAssigned(selectedItem, !isEqualSplit)
-                                        }
+                                        onClick={() => setAllUnitsAssigned(selectedItem, !isEqualSplit)}
                                     >
                                         {isEqualSplit ? "Divide individually" : "Divide equally"}
                                     </button>
@@ -365,11 +374,8 @@ const Step4 = ({ nextStep, prevStep }) => {
                                                             <button
                                                                 key={person.id}
                                                                 type="button"
-                                                                onClick={() =>
-                                                                    togglePersonForUnit(selectedItem, index, person.id)
-                                                                }
-                                                                className={`${styles.personSelectBtn} ${isSelected ? styles.personSelectBtnActive : ""
-                                                                    }`}
+                                                                onClick={() => togglePersonForUnit(selectedItem, index, person.id)}
+                                                                className={`${styles.personSelectBtn} ${isSelected ? styles.personSelectBtnActive : ""}`}
                                                             >
                                                                 {person.name}
                                                             </button>
@@ -391,7 +397,8 @@ const Step4 = ({ nextStep, prevStep }) => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </div>
 
