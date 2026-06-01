@@ -5,22 +5,90 @@ import styles from "../../scss/components/Steps.module.scss";
 
 const Step3 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
-    const [newItem, setNewItem] = useState({ name: "", amount: "" });
+    const [newItem, setNewItem] = useState({ name: "", quantity: "1", totalAmount: "" });
+    const [editingItemId, setEditingItemId] = useState(null);
     const handleEnterAdvance = useEnterToAdvance();
 
-    const addItem = () => {
-        if (newItem.name && newItem.amount) {
+    const resetItemForm = () => {
+        setNewItem({ name: "", quantity: "1", totalAmount: "" });
+        setEditingItemId(null);
+    };
+
+    const buildUnitSplits = (item, quantity) => {
+        const unitSplits = Array.isArray(item.unitSplits) ? item.unitSplits : [];
+        return Array.from({ length: quantity }, (_, index) => {
+            const split = unitSplits[index];
+            const assignedTo = Array.isArray(split?.assignedTo)
+                ? split.assignedTo
+                : index === 0 && Array.isArray(item.assignedTo)
+                    ? item.assignedTo
+                    : [];
+            return { assignedTo };
+        });
+    };
+
+    const handleSaveItem = () => {
+        const quantity = parseInt(newItem.quantity, 10);
+        const totalAmount = parseFloat(newItem.totalAmount);
+        if (!newItem.name || Number.isNaN(quantity) || quantity < 1 || Number.isNaN(totalAmount)) {
+            return;
+        }
+
+        if (editingItemId) {
             updateForm({
-                items: [...formData.items, { ...newItem, id: Date.now(), assignedTo: [] }],
+                items: formData.items.map((item) =>
+                    item.id === editingItemId
+                        ? {
+                            ...item,
+                            name: newItem.name.trim(),
+                            quantity,
+                            totalAmount,
+                            splitMode: item.splitMode || "counts",
+                            unitSplits: buildUnitSplits(item, quantity),
+                        }
+                        : item
+                ),
             });
-            setNewItem({ name: "", amount: "" });
+            resetItemForm();
+            return;
+        }
+
+        updateForm({
+            items: [
+                ...formData.items,
+                {
+                    id: Date.now(),
+                    name: newItem.name.trim(),
+                    quantity,
+                    totalAmount,
+                    splitMode: "counts",
+                    unitSplits: Array.from({ length: quantity }, () => ({ assignedTo: [] })),
+                },
+            ],
+        });
+        resetItemForm();
+    };
+
+    const startEditItem = (item) => {
+        setEditingItemId(item.id);
+        setNewItem({
+            name: item.name || "",
+            quantity: String(item.quantity ?? 1),
+            totalAmount: String(item.totalAmount ?? item.amount ?? ""),
+        });
+    };
+
+    const removeItem = (itemId) => {
+        updateForm({ items: formData.items.filter((item) => item.id !== itemId) });
+        if (editingItemId === itemId) {
+            resetItemForm();
         }
     };
 
     const subtotal = useMemo(
         () =>
             formData.items.reduce(
-                (sum, item) => sum + parseFloat(item.amount || 0),
+                (sum, item) => sum + parseFloat(item.totalAmount ?? item.amount ?? 0),
                 0
             ),
         [formData.items]
@@ -56,8 +124,33 @@ const Step3 = ({ nextStep, prevStep }) => {
             <label className={styles.label}>Manual Entry</label>
             {formData.items.map((item) => (
                 <div key={item.id} className={styles.itemRow}>
-                    <span className={styles.itemName}>{item.name}</span>
-                    <span className={styles.itemAmount}>{item.amount} Rs</span>
+                    <div className={styles.itemMeta}>
+                        <span className={styles.itemName}>{item.name}</span>
+                        <span className={styles.itemSubtext}>Qty {item.quantity ?? 1}</span>
+                    </div>
+                    <span className={styles.itemAmount}>
+                        {(parseFloat(item.totalAmount ?? item.amount ?? 0)).toFixed(2)} Rs
+                    </span>
+                    <div className={styles.itemActions}>
+                        <button
+                            type="button"
+                            onClick={() => startEditItem(item)}
+                            className={styles.itemActionBtn}
+                            aria-label="Edit item"
+                            title="Edit"
+                        >
+                            <i className="fas fa-pen"></i>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            className={`${styles.itemActionBtn} ${styles.itemActionDelete}`}
+                            aria-label="Delete item"
+                            title="Delete"
+                        >
+                            <i className="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
             ))}
 
@@ -72,15 +165,32 @@ const Step3 = ({ nextStep, prevStep }) => {
                 />
                 <input
                     type="number"
-                    placeholder="Amount"
-                    className={styles.input}
-                    value={newItem.amount}
-                    onChange={(e) => setNewItem({ ...newItem, amount: e.target.value })}
+                    placeholder="Quantity"
+                    className={`${styles.input} ${styles.quantityInput}`}
+                    min="1"
+                    step="1"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     onKeyDown={handleEnterAdvance}
                 />
-                <button type="button" onClick={addItem} className={styles.btnAdd}>
-                    Add
-                </button>
+                <input
+                    type="number"
+                    placeholder="Total Amount"
+                    className={styles.input}
+                    value={newItem.totalAmount}
+                    onChange={(e) => setNewItem({ ...newItem, totalAmount: e.target.value })}
+                    onKeyDown={handleEnterAdvance}
+                />
+                <div className={styles.addItemActions}>
+                    <button type="button" onClick={handleSaveItem} className={styles.btnAdd}>
+                        {editingItemId ? "Update" : "Add"}
+                    </button>
+                    {editingItemId && (
+                        <button type="button" onClick={resetItemForm} className={styles.btnGhost}>
+                            Cancel
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className={styles.totalSection}>

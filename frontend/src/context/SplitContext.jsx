@@ -4,6 +4,40 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 
 const SplitContext = createContext();
 
+const normalizeQuantity = (value) => {
+  const parsed = parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+};
+
+const buildUnitPrices = (totalAmount, quantity) => {
+  const qty = normalizeQuantity(quantity);
+  const totalCents = Math.round((parseFloat(totalAmount) || 0) * 100);
+  if (qty <= 0) {
+    return [];
+  }
+
+  const baseCents = Math.round(totalCents / qty);
+  return Array.from({ length: qty }, (_, index) => {
+    if (index < qty - 1) {
+      return baseCents / 100;
+    }
+    return (totalCents - baseCents * (qty - 1)) / 100;
+  });
+};
+
+const normalizeUnitSplits = (item, quantity) => {
+  const unitSplits = Array.isArray(item.unitSplits) ? item.unitSplits : [];
+  return Array.from({ length: quantity }, (_, index) => {
+    const split = unitSplits[index];
+    const assignedTo = Array.isArray(split?.assignedTo)
+      ? split.assignedTo
+      : index === 0 && Array.isArray(item.assignedTo)
+        ? item.assignedTo
+        : [];
+    return { assignedTo };
+  });
+};
+
 export const SplitProvider = ({ children }) => {
   const getDefaultDateTime = () => {
     const now = new Date();
@@ -39,13 +73,25 @@ export const SplitProvider = ({ children }) => {
 
   const calculatePersonAmount = useCallback((personId) => {
     const itemsTotal = formData.items.reduce((sum, item) => {
-      const assignedTo = Array.isArray(item.assignedTo) ? item.assignedTo : [];
-      if (!assignedTo.includes(personId)) {
+      const quantity = normalizeQuantity(item.quantity);
+      const totalAmount = parseFloat(item.totalAmount ?? item.amount ?? 0) || 0;
+      if (!totalAmount) {
         return sum;
       }
 
-      const splitCount = assignedTo.length || 1;
-      return sum + parseFloat(item.amount || 0) / splitCount;
+      const unitPrices = buildUnitPrices(totalAmount, quantity);
+      const unitSplits = normalizeUnitSplits(item, quantity);
+      const itemTotal = unitSplits.reduce((unitSum, split, index) => {
+        if (!split.assignedTo.includes(personId)) {
+          return unitSum;
+        }
+
+        const splitCount = split.assignedTo.length || 1;
+        const unitPrice = unitPrices[index] ?? 0;
+        return unitSum + unitPrice / splitCount;
+      }, 0);
+
+      return sum + itemTotal;
     }, 0);
 
     const subtotal = parseFloat(formData.subtotal) || 0;
