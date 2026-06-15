@@ -3,7 +3,7 @@ import { useSplit } from "../../context/SplitContext";
 import { useEnterToAdvance } from "../../hooks/useEnterToAdvance";
 import styles from "../../scss/components/Steps.module.scss";
 
-const Step2 = ({ nextStep, prevStep }) => {
+const Step3 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
     const [newPerson, setNewPerson] = useState({ name: "", email: "" });
     const handleEnterAdvance = useEnterToAdvance();
@@ -131,4 +131,4 @@ const Step2 = ({ nextStep, prevStep }) => {
     );
 };
 
-export default Step2;
+export default Step3;
