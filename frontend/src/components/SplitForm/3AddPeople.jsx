@@ -1,18 +1,38 @@
 import { useState } from "react";
 import { useSplit } from "../../context/SplitContext";
+import { useEnterToAdvance } from "../../hooks/useEnterToAdvance";
 import styles from "../../scss/components/Steps.module.scss";
 
-const Step2 = ({ nextStep, prevStep }) => {
+const Step3 = ({ nextStep, prevStep }) => {
     const { formData, updateForm } = useSplit();
     const [newPerson, setNewPerson] = useState({ name: "", email: "" });
+    const handleEnterAdvance = useEnterToAdvance();
+
+    const [error, setError] = useState("");
 
     const addPerson = () => {
-        if (newPerson.name) {
-            updateForm({
-                people: [...formData.people, { ...newPerson, id: Date.now() }],
-            });
-            setNewPerson({ name: "", email: "" });
+        const name = (newPerson.name || "").trim();
+        if (!name) {
+            setError("Please enter a name.");
+            return;
         }
+
+        const lower = name.toLowerCase();
+        const duplicateInPeople = formData.people.some(
+            (p) => (p.name || "").trim().toLowerCase() === lower
+        );
+        const duplicatePayer = (formData.payer?.name || "").trim().toLowerCase() === lower;
+
+        if (duplicateInPeople || duplicatePayer) {
+            setError("A person with this name already exists.");
+            return;
+        }
+
+        updateForm({
+            people: [...formData.people, { ...newPerson, name, id: Date.now() }],
+        });
+        setNewPerson({ name: "", email: "" });
+        setError("");
     };
 
     const removePerson = (id) => {
@@ -22,7 +42,7 @@ const Step2 = ({ nextStep, prevStep }) => {
     };
 
     return (
-        <div className={styles.card}>
+        <div className={styles.card} data-enter-scope="true">
             <h2 className={styles.title}>Add People</h2>
 
             <div className={styles.section}>
@@ -66,21 +86,29 @@ const Step2 = ({ nextStep, prevStep }) => {
                     placeholder="Name"
                     className={styles.input}
                     value={newPerson.name}
-                    onChange={(e) => setNewPerson({ ...newPerson, name: e.target.value })}
+                    onChange={(e) => {
+                        setNewPerson({ ...newPerson, name: e.target.value });
+                        if (error) setError("");
+                    }}
+                    onKeyDown={handleEnterAdvance}
                 />
                 <input
                     type="email"
                     placeholder="Email (optional)"
                     className={styles.input}
                     value={newPerson.email}
-                    onChange={(e) =>
-                        setNewPerson({ ...newPerson, email: e.target.value })
-                    }
+                    onChange={(e) => {
+                        setNewPerson({ ...newPerson, email: e.target.value });
+                        if (error) setError("");
+                    }}
+                    onKeyDown={handleEnterAdvance}
                 />
                 <button type="button" onClick={addPerson} className={styles.btnAdd}>
                     Add
                 </button>
             </div>
+
+            {error && <div className={styles.errorText} role="alert">{error}</div>}
 
             <div className={styles.btnRow}>
                 <button
@@ -103,4 +131,4 @@ const Step2 = ({ nextStep, prevStep }) => {
     );
 };
 
-export default Step2;
+export default Step3;

@@ -1,19 +1,27 @@
 // import { useState } from "react";
 import { useSplit } from "../../context/SplitContext";
+import { useEnterToAdvance } from "../../hooks/useEnterToAdvance";
 import styles from "../../scss/components/Steps.module.scss";
 
 const Step1SplitInfo = ({ nextStep }) => {
   const { formData, updateForm } = useSplit();
+  const handleEnterAdvance = useEnterToAdvance();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.title && formData.date && formData.time) {
-      nextStep();
+    if (!formData.date || !formData.time) {
+      return;
     }
+
+    if (!formData.title || !formData.title.trim()) {
+      updateForm({ title: "Quick Split" });
+    }
+
+    nextStep();
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} data-enter-scope="true">
       <h2 className={styles.title}>Split Information</h2>
       <form onSubmit={handleSubmit}>
         <label className={styles.label}>Title</label>
@@ -23,7 +31,7 @@ const Step1SplitInfo = ({ nextStep }) => {
           placeholder="Jackson's Restaurant Split"
           value={formData.title}
           onChange={(e) => updateForm({ title: e.target.value })}
-          required
+          onKeyDown={handleEnterAdvance}
         />
 
         <label className={styles.label}>Date & Time</label>
@@ -33,6 +41,7 @@ const Step1SplitInfo = ({ nextStep }) => {
             className={styles.input}
             value={formData.date}
             onChange={(e) => updateForm({ date: e.target.value })}
+            onKeyDown={handleEnterAdvance}
             required
           />
           <input
@@ -40,6 +49,7 @@ const Step1SplitInfo = ({ nextStep }) => {
             className={styles.input}
             value={formData.time}
             onChange={(e) => updateForm({ time: e.target.value })}
+            onKeyDown={handleEnterAdvance}
             required
           />
         </div>
